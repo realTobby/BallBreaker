@@ -1,6 +1,7 @@
 ﻿using Raylib_cs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BallBreaker
 {
@@ -15,7 +16,6 @@ namespace BallBreaker
         static GameState currentGameState = GameState.Ready;
 
         static Position player = new Position(0,0);
-        static Ball ball = new Ball();
         static Random rnd = new Random();
 
         static int WINDOW_WIDTH = 300;
@@ -23,17 +23,17 @@ namespace BallBreaker
 
         static List<Position> collisions = new List<Position>();
 
-
+        static List<Ball> balls = new List<Ball>();
 
         static void Main(string[] args)
         {
             player.X = WINDOW_WIDTH/2;
             player.Y = WINDOW_HEIGHT-64;
 
-            ball.BallPosition.X = WINDOW_WIDTH/2;
-            ball.BallPosition.Y = WINDOW_HEIGHT - 64;
-   
-
+            Ball entryBall = new Ball();
+            entryBall.BallPosition.X = WINDOW_WIDTH / 2;
+            entryBall.BallPosition.Y = WINDOW_HEIGHT - 64;
+            balls.Add(entryBall);
 
             Raylib.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "BallBreaker");
             while (!Raylib.WindowShouldClose())
@@ -43,7 +43,8 @@ namespace BallBreaker
                 Raylib.ClearBackground(Color.WHITE);
 
                 HandlePlayer();
-                HandleBall();
+                foreach(Ball b in balls.ToList())
+                    HandleBall(b);
 
                 Raylib.EndDrawing();
             }
@@ -51,7 +52,7 @@ namespace BallBreaker
             Raylib.CloseWindow();
         }
 
-        static void HandleBall()
+        static void HandleBall(Ball ball)
         {
             if(currentGameState == GameState.Ready)
             {
@@ -119,8 +120,8 @@ namespace BallBreaker
                 ResetBall();
                 if(currentGameState == GameState.Ready)
                 {
-                    ball.BallVelocity.X = rnd.Next(-200,200);
-                    ball.BallVelocity.Y = rnd.Next(-200,-100);
+                    balls[0].BallVelocity.X = rnd.Next(-200,200);
+                    balls[0].BallVelocity.Y = rnd.Next(-200,-100);
 
                     currentGameState = GameState.Playing;
                 }
@@ -133,10 +134,27 @@ namespace BallBreaker
         static void ResetBall()
         {
             currentGameState = GameState.Ready;
-            ball.BallPosition.X = player.X;
-            ball.BallPosition.Y = player.Y;
-            ball.BallVelocity.X = rnd.Next(-200, 200);
-            ball.BallVelocity.Y = rnd.Next(-200, -100);
+
+            balls.Clear();
+            balls = new List<Ball>();
+
+            Ball entryBall = new Ball();
+
+            entryBall.BallPosition.X = player.X;
+            entryBall.BallPosition.Y = player.Y;
+            entryBall.BallVelocity.X = rnd.Next(-200, 200);
+            entryBall.BallVelocity.Y = rnd.Next(-200, -100);
+            balls.Add(entryBall);
+        }
+
+        static void AddNewBall(Position pos)
+        {
+            Ball newBall = new Ball();
+            newBall.BallPosition.X = pos.X;
+            newBall.BallPosition.Y = pos.Y;
+            newBall.BallVelocity.X = rnd.Next(-200, 200);
+            newBall.BallVelocity.Y = rnd.Next(-200, -100);
+            balls.Add(newBall);
         }
     }
 }
