@@ -27,8 +27,6 @@ namespace BallBreaker
 
         private void SpawnBricks()
         {
-            int brickCount = 10;
-
             for(int y = 0; y < gameHeight/2; y+=18)
             {
                 for(int x = 8; x < gameWidth-32; x+=36)
@@ -147,19 +145,25 @@ namespace BallBreaker
                 HandleBallVelocityAfterCollision(cd);
                 
             }
+
+            if(brickCollection.Count <= 0)
+            {
+                InitGame(gameWidth, gameHeight);
+            }
+
         }
 
         public void HandlePlayer()
         {
 
-            if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT) && player.PLAYER_POSITION.X > 32)
+            if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT) && player.PLAYER_POSITION.X > 0)
             {
-                player.PLAYER_POSITION.X -= 150f * Raylib.GetFrameTime();
+                player.PLAYER_POSITION.X -= 155f * Raylib.GetFrameTime();
             }
 
-            if (Raylib.IsKeyDown(KeyboardKey.KEY_RIGHT) && player.PLAYER_POSITION.X < gameWidth - 32)
+            if (Raylib.IsKeyDown(KeyboardKey.KEY_RIGHT) && player.PLAYER_POSITION.X < gameWidth - 64)
             {
-                player.PLAYER_POSITION.X += 150f * Raylib.GetFrameTime();
+                player.PLAYER_POSITION.X += 155f * Raylib.GetFrameTime();
             }
 
             if (Raylib.IsKeyDown(KeyboardKey.KEY_SPACE))

@@ -8,7 +8,7 @@ namespace BallBreaker
         public Position BallPosition { get; set; } = new Position(0,0);
         public Position BallVelocity { get; set; } = new Position(0,0);
 
-        public int BallSpeed = 3;
+        public int BallSpeed = 1;
 
         public void UpdateBall()
         {
