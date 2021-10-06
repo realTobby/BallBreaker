@@ -28,8 +28,6 @@ namespace BallBreaker
             {
                 return true;
             }
-
-
             return false;
         }
 

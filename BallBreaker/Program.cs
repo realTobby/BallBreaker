@@ -27,6 +27,7 @@ namespace BallBreaker
 
                 bbg.HandlePlayer();
                 bbg.HandleBall();
+                bbg.HandleBricks();
 
                 Raylib.EndDrawing();
             }

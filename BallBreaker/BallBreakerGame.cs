@@ -1,6 +1,7 @@
 ﻿using Raylib_cs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BallBreaker
@@ -23,11 +24,29 @@ namespace BallBreaker
 
         GameState currentGameState = GameState.Ready;
 
+        private List<Brick> brickCollection = new List<Brick>();
+
+        private void SpawnBricks()
+        {
+            int brickCount = 10;
+
+            for(int y = 0; y < gameHeight/2; y+=18)
+            {
+                for(int x = 0; x < gameWidth-32; x+=36)
+                {
+                    Brick b = new Brick(x, y);
+                    brickCollection.Add(b);
+                }
+            }
+        }
 
         public void InitGame(int w, int h)
         {
             gameWidth = w;
             gameHeight = h;
+
+            SpawnBricks();
+
 
             player = new Player(gameWidth / 2, gameHeight - 64);
 
@@ -36,7 +55,6 @@ namespace BallBreaker
 
             ball = new Ball();
             ResetBall();
-            
         }
 
         public void HandleBall()
@@ -44,29 +62,28 @@ namespace BallBreaker
             if (currentGameState == GameState.Ready)
             {
                 ball.BallPosition.X = player.PLAYER_POSITION.X;
-                ball.BallPosition.Y = player.PLAYER_POSITION.Y;
+                ball.BallPosition.Y = player.PLAYER_POSITION.Y - 32;
             }
 
             if (currentGameState == GameState.Playing)
             {
                 ball.UpdateBall();
-                //Raylib.DrawLine(Convert.ToInt32(ball.BallPosition.X), Convert.ToInt32(ball.BallPosition.Y), Convert.ToInt32(player.X), Convert.ToInt32(player.Y), Color.GOLD);
-                // check if collision is happening now
+
                 // collision can happen between:
                 // 1: Window Border
-                if (ball.BallPosition.X < 0)
+                if (ball.BallPosition.X < 10)
                 {
                     // COLLIDE WITH LEFT BORDER
                     ball.BallVelocity.X *= -1;
                 }
 
-                if (ball.BallPosition.Y < 0)
+                if (ball.BallPosition.Y < 10)
                 {
                     // COLLIDE WITH TOP BORDER
                     ball.BallVelocity.Y *= -1;
                 }
 
-                if (ball.BallPosition.X > gameWidth)
+                if (ball.BallPosition.X > gameWidth-10)
                 {
                     // COLLIDE WITH RIGHT BORDER
                     ball.BallVelocity.X *= -1;
@@ -80,12 +97,10 @@ namespace BallBreaker
                 }
 
                 // 2: Player
-
                 if(player.IsColliding(Convert.ToInt32(ball.BallPosition.X), Convert.ToInt32(ball.BallPosition.Y)))
                 {
                     ball.BallVelocity.Y *= -1;
                 }
-
 
                 // 3: Blocks
 
@@ -94,6 +109,20 @@ namespace BallBreaker
 
 
             Raylib.DrawCircle(Convert.ToInt32(ball.BallPosition.X), Convert.ToInt32(ball.BallPosition.Y), 10, Color.BLACK);
+        }
+
+        public void HandleBricks()
+        {
+            foreach(Brick b in brickCollection.ToList())
+            {
+                Raylib.DrawRectangle(Convert.ToInt32(b.Position.X), Convert.ToInt32(b.Position.Y), b.Width, b.Height, Color.GREEN);
+                if(b.IsColliding(Convert.ToInt32(ball.BallPosition.X), Convert.ToInt32(ball.BallPosition.Y)))
+                {
+                    brickCollection.Remove(b);
+                    ball.BallVelocity.X *= -1;
+                    ball.BallVelocity.Y *= -1;
+                }
+            }
         }
 
         public void HandlePlayer()
@@ -111,14 +140,18 @@ namespace BallBreaker
 
             if (Raylib.IsKeyDown(KeyboardKey.KEY_SPACE))
             {
-                ResetBall();
-                currentGameState = GameState.Ready;
+                
                 if (currentGameState == GameState.Ready)
                 {
                     ball.BallVelocity.X = random.Next(-200, 200);
                     ball.BallVelocity.Y = random.Next(-200, -100);
 
                     currentGameState = GameState.Playing;
+                }
+                else
+                {
+                    currentGameState = GameState.Ready;
+                    ResetBall();
                 }
             }
 
@@ -128,10 +161,8 @@ namespace BallBreaker
 
         private void ResetBall()
         {
-            
-
             ball.BallPosition.X = gameWidth / 2;
-            ball.BallPosition.Y = gameHeight - 64;
+            ball.BallPosition.Y = player.PLAYER_POSITION.Y - 32;
             ball.BallVelocity.X = random.Next(-200, 200);
             ball.BallVelocity.Y = random.Next(-200, -100);
         }
