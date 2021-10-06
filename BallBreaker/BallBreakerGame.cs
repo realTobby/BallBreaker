@@ -96,8 +96,26 @@ namespace BallBreaker
 
                 // 2: Player
                 CollisionDirection cd = player.IsColliding(Convert.ToInt32(player.PLAYER_POSITION.X), Convert.ToInt32(player.PLAYER_POSITION.Y), Convert.ToInt32(ball.BallPosition.X), Convert.ToInt32(ball.BallPosition.Y));
-                HandleBallVelocityAfterCollision(cd);
 
+                if(cd != CollisionDirection.NoCollision)
+                {
+                    bool isLeftHit = false;
+                    if (ball.BallPosition.X >= player.PLAYER_POSITION.X / 2)
+                    {
+                        isLeftHit = true;
+                    }
+                    if (isLeftHit)
+                    {
+                        ball.BallVelocity.X -= 1.2f;
+                    }
+                    else
+                    {
+                        ball.BallVelocity.X += 1.2f;
+                    }
+                }
+
+                HandleBallVelocityAfterCollision(cd);
+                
                 // ALSO DETERMINE WHERE THE BALL HIT AND ADD OR REDUCE VELOCITY
 
 
@@ -128,6 +146,8 @@ namespace BallBreaker
                     ball.BallVelocity.Y *= -1;
                     break;
             }
+
+            
         }
 
         public void HandleBricks()
