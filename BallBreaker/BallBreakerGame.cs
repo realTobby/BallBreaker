@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace BallBreaker
 {
@@ -46,7 +45,6 @@ namespace BallBreaker
             gameHeight = h;
 
             SpawnBricks();
-
 
             player = new Player(gameWidth / 2, gameHeight - 64);
 
