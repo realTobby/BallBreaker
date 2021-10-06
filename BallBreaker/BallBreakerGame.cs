@@ -32,7 +32,7 @@ namespace BallBreaker
 
             for(int y = 0; y < gameHeight/2; y+=18)
             {
-                for(int x = 0; x < gameWidth-32; x+=36)
+                for(int x = 8; x < gameWidth-32; x+=36)
                 {
                     Brick b = new Brick(x, y);
                     brickCollection.Add(b);
@@ -50,8 +50,10 @@ namespace BallBreaker
 
             player = new Player(gameWidth / 2, gameHeight - 64);
 
-            player.playerWidth = 64;
-            player.playerHeight = 16;
+            player.ColliderWidth = 64;
+            player.ColliderHeight = 16;
+
+            player.PLAYER_POSITION.X = player.PLAYER_POSITION.X - player.ColliderWidth / 2;
 
             ball = new Ball();
             ResetBall();
@@ -61,7 +63,7 @@ namespace BallBreaker
         {
             if (currentGameState == GameState.Ready)
             {
-                ball.BallPosition.X = player.PLAYER_POSITION.X;
+                ball.BallPosition.X = player.PLAYER_POSITION.X + player.ColliderWidth/2;
                 ball.BallPosition.Y = player.PLAYER_POSITION.Y - 32;
             }
 
@@ -71,13 +73,13 @@ namespace BallBreaker
 
                 // collision can happen between:
                 // 1: Window Border
-                if (ball.BallPosition.X < 10)
+                if (ball.BallPosition.X < 2)
                 {
                     // COLLIDE WITH LEFT BORDER
                     ball.BallVelocity.X *= -1;
                 }
 
-                if (ball.BallPosition.Y < 10)
+                if (ball.BallPosition.Y < 2)
                 {
                     // COLLIDE WITH TOP BORDER
                     ball.BallVelocity.Y *= -1;
@@ -97,7 +99,7 @@ namespace BallBreaker
                 }
 
                 // 2: Player
-                if(player.IsColliding(Convert.ToInt32(ball.BallPosition.X), Convert.ToInt32(ball.BallPosition.Y)))
+                if(player.IsColliding(Convert.ToInt32(player.PLAYER_POSITION.X), Convert.ToInt32(player.PLAYER_POSITION.Y), Convert.ToInt32(ball.BallPosition.X), Convert.ToInt32(ball.BallPosition.Y)))
                 {
                     ball.BallVelocity.Y *= -1;
                 }
@@ -115,8 +117,8 @@ namespace BallBreaker
         {
             foreach(Brick b in brickCollection.ToList())
             {
-                Raylib.DrawRectangle(Convert.ToInt32(b.Position.X), Convert.ToInt32(b.Position.Y), b.Width, b.Height, Color.GREEN);
-                if(b.IsColliding(Convert.ToInt32(ball.BallPosition.X), Convert.ToInt32(ball.BallPosition.Y)))
+                Raylib.DrawRectangle(Convert.ToInt32(b.Position.X), Convert.ToInt32(b.Position.Y), b.ColliderWidth, b.ColliderHeight, Color.GREEN);
+                if(b.IsColliding(Convert.ToInt32(b.Position.X), Convert.ToInt32(b.Position.Y),  Convert.ToInt32(ball.BallPosition.X), Convert.ToInt32(ball.BallPosition.Y)))
                 {
                     brickCollection.Remove(b);
                     ball.BallVelocity.X *= -1;
@@ -156,7 +158,7 @@ namespace BallBreaker
             }
 
 
-            Raylib.DrawRectangle(Convert.ToInt32(player.PLAYER_POSITION.X - player.playerWidth/2), Convert.ToInt32(player.PLAYER_POSITION.Y - player.playerHeight/2), player.playerWidth, player.playerHeight, Color.RED);
+            Raylib.DrawRectangle(Convert.ToInt32(player.PLAYER_POSITION.X), Convert.ToInt32(player.PLAYER_POSITION.Y), player.ColliderWidth, player.ColliderHeight, Color.RED);
         }
 
         private void ResetBall()
