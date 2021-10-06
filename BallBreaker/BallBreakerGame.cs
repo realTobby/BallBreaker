@@ -97,12 +97,10 @@ namespace BallBreaker
                 }
 
                 // 2: Player
-                if(player.IsColliding(Convert.ToInt32(player.PLAYER_POSITION.X), Convert.ToInt32(player.PLAYER_POSITION.Y), Convert.ToInt32(ball.BallPosition.X), Convert.ToInt32(ball.BallPosition.Y)))
-                {
-                    ball.BallVelocity.Y *= -1;
-                }
+                CollisionDirection cd = player.IsColliding(Convert.ToInt32(player.PLAYER_POSITION.X), Convert.ToInt32(player.PLAYER_POSITION.Y), Convert.ToInt32(ball.BallPosition.X), Convert.ToInt32(ball.BallPosition.Y));
+                HandleBallVelocityAfterCollision(cd);
 
-                // 3: Blocks
+                // ALSO DETERMINE WHERE THE BALL HIT AND ADD OR REDUCE VELOCITY
 
 
             }
@@ -111,17 +109,43 @@ namespace BallBreaker
             Raylib.DrawCircle(Convert.ToInt32(ball.BallPosition.X), Convert.ToInt32(ball.BallPosition.Y), 10, Color.BLACK);
         }
 
+        private void HandleBallVelocityAfterCollision(CollisionDirection cd)
+        {
+            switch (cd)
+            {
+                case CollisionDirection.Any:
+                    ball.BallVelocity.X *= -1;
+                    ball.BallVelocity.Y *= -1;
+                    break;
+                case CollisionDirection.Left:
+                    ball.BallVelocity.X *= -1;
+                    break;
+                case CollisionDirection.Right:
+                    ball.BallVelocity.X *= -1;
+                    break;
+                case CollisionDirection.Top:
+                    ball.BallVelocity.Y *= -1;
+                    break;
+                case CollisionDirection.Down:
+                    ball.BallVelocity.Y *= -1;
+                    break;
+            }
+        }
+
         public void HandleBricks()
         {
             foreach(Brick b in brickCollection.ToList())
             {
                 Raylib.DrawRectangle(Convert.ToInt32(b.Position.X), Convert.ToInt32(b.Position.Y), b.ColliderWidth, b.ColliderHeight, Color.GREEN);
-                if(b.IsColliding(Convert.ToInt32(b.Position.X), Convert.ToInt32(b.Position.Y),  Convert.ToInt32(ball.BallPosition.X), Convert.ToInt32(ball.BallPosition.Y)))
+                CollisionDirection cd = b.IsColliding(Convert.ToInt32(b.Position.X), Convert.ToInt32(b.Position.Y), Convert.ToInt32(ball.BallPosition.X), Convert.ToInt32(ball.BallPosition.Y));
+                
+                if(cd != CollisionDirection.NoCollision)
                 {
                     brickCollection.Remove(b);
-                    ball.BallVelocity.X *= -1;
-                    ball.BallVelocity.Y *= -1;
                 }
+
+                HandleBallVelocityAfterCollision(cd);
+                
             }
         }
 

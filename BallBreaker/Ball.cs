@@ -8,10 +8,12 @@ namespace BallBreaker
         public Position BallPosition { get; set; } = new Position(0,0);
         public Position BallVelocity { get; set; } = new Position(0,0);
 
+        public int BallSpeed = 3;
+
         public void UpdateBall()
         {
-            BallPosition.X += Raylib.GetFrameTime() * BallVelocity.X;
-            BallPosition.Y += Raylib.GetFrameTime() * BallVelocity.Y;
+            BallPosition.X += Raylib.GetFrameTime() * BallVelocity.X * BallSpeed;
+            BallPosition.Y += Raylib.GetFrameTime() * BallVelocity.Y * BallSpeed;
         }
 
     }
